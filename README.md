@@ -134,25 +134,7 @@ As a Product Manager, success is not measured by "zero human touch," but by effi
 
 ---
 
-## 🚀 Getting Started
 
-*(Note: This section is a placeholder for the actual code implementation. To run this project locally, ensure you have Python 3.10+ installed.)*
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/dealdesk-agent.git
-cd dealdesk-agent
-
-# Create a virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up environment variables
-cp .env.example .env
-# Fill in your OPENAI_API_KEY, PINECONE_API_KEY, LANGSMITH_API_KEY, etc.
 
 # Run the ingestion pipeline to populate the Vector DB
 python src/ingest.py --data_path ./sample_knowledge_base/
