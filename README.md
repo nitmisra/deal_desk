@@ -18,6 +18,16 @@ This repository serves as the architectural blueprint, product strategy, and imp
 DealDesk is not a simple "prompt-in, answer-out" chatbot. It is built as a **State Machine** using an Agentic framework (e.g., LangGraph). 
 
 ### The User Journey
+**Persona:** Alex, an Account Executive trying to close a $500k enterprise deal. Alex just received a 60-question security and compliance RFP from "Acme Corp."
+**Ingestion & Parsing:** Alex uploads the Acme Corp RFP (PDF/Excel) into DealDesk. The system parses the file and extracts the 60 discrete questions.
+**Triage & Routing (Human-in-the-Loop):** DealDesk doesn't just blindly answer. It presents Alex with a dashboard of the 60 questions.
+Green flags: "I can answer this with 95% confidence using our Security Docs."
+Red flags: "This asks about a specific custom integration we haven't documented. I need a human."
+**Action:** Alex reviews the red flags and assigns them to a Sales Engineer via Slack, while letting the Agent handle the green flags.
+Drafting & Context Retrieval: The Agent autonomously searches the Vector DB, drafts answers for the 45 "green" questions, and cites the exact internal documents it used.
+**Review & Refinement:** Alex reads the drafts. For Question #12, the Agent's answer is slightly off-brand. Alex highlights the text and types: "Make this sound more enterprise-focused and mention our SOC2 compliance." The Agent rewrites it.
+**Export:** Alex clicks "Export," and DealDesk generates a perfectly formatted Word document ready to be sent to Acme Corp.
+
 1. **Ingestion:** AE uploads a 60-question RFP. The system parses and extracts discrete questions.
 2. **Triage:** The Agent categorizes questions and flags "Red" (low confidence/missing context) vs "Green" (high confidence) questions.
 3. **Autonomous Drafting:** The Agent searches internal Vector DBs, drafts answers, and grades its own work.
