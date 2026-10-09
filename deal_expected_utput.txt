@@ -1,0 +1,37 @@
+================================================================================
+🚀 Processing RFP: acme_corp_2026
+   Total questions: 5
+================================================================================
+
+================================================================================
+📝 Question 1/5: Do you support Single Sign-On (SSO)? What protocols are supported?
+================================================================================
+
+🔀 [ROUTER] Categorizing question: Do you support Single Sign-On (SSO)? Wh...
+   → Category: SECURITY
+
+🔍 [RETRIEVER] Searching for relevant documents...
+   → Retrieved 2 documents
+     1. doc_001 (score: 0.67)
+     2. doc_002 (score: 0.33)
+
+✍️  [GENERATOR] Drafting response...
+   → Draft: Yes, our platform supports Single Sign-On (SSO) using SAML 2.0 a...
+
+⚖️  [GRADER] Evaluating draft (iteration 1)...
+   → Verdict: PASS
+✅ Grader PASSED - moving to next question
+
+✅ FINAL ANSWER: Yes, our platform supports Single Sign-On (SSO) using SAML 2.0 and OIDC protocols. Session timeouts are enforced at 15 minutes of inactivity, and MFA is required for administrative accounts.
+
+...
+
+📊 RFP PROCESSING SUMMARY
+================================================================================
+Total questions: 5
+Auto-answered: 4
+Requires human: 1
+Errors: 0
+Human Intervention Rate: 20.0%
+
+💾 Results saved to: output_acme_corp_2026.json

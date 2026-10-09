@@ -1,0 +1,14 @@
+dealdesk-agent/
+├── src/
+│   ├── __init__.py
+│   ├── state.py              # State definition
+│   ├── nodes.py              # Agent nodes (Router, Retriever, etc.)
+│   ├── graph.py              # LangGraph state machine
+│   ├── vector_db.py          # Mock Vector DB
+│   └── prompts.py            # All LLM prompts
+├── data/
+│   ├── knowledge_base/       # Sample documents
+│   └── sample_rfp.json       # Test RFP
+├── requirements.txt
+├── .env.example
+└── main.py                   # Entry point

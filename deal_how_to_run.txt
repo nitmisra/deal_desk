@@ -1,0 +1,13 @@
+Install dependencies:
+bash 
+1 pip install -r requirements.txt
+
+
+Set up environment variables:
+bash
+1 cp
+
+
+Run the agent:
+bash
+1 python main.py

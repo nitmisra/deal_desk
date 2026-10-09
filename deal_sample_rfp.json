@@ -1,0 +1,10 @@
+{
+  "rfp_id": "acme_corp_2026",
+  "questions": [
+    "Do you support Single Sign-On (SSO)? What protocols are supported?",
+    "What is your uptime SLA for the Enterprise tier?",
+    "What is your API rate limit for Enterprise customers?",
+    "Are you SOC2 compliant?",
+    "Where is your data hosted? Do you support EU data residency?"
+  ]
+}
