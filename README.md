@@ -85,6 +85,18 @@ We strip the LLM of its "helpful assistant" persona and prompt it as a "ruthless
 
 **Why this path was selected:** In enterprise sales, a hallucinated answer (e.g., inventing a security compliance cert) can lose a deal or cause legal liability. Forced evidence extraction mathematically grounds the evaluation, making it production-safe.
 
+### Building the Eval Suite
+Evaluating an agent is much harder than evaluating a simple chatbot. You need to measure the journey, not just the destination. You will use a tool like LangSmith, Braintrust, or Arize Phoenix to build three layers of evals:
+1. Retrieval Evals (Did it find the right info?)
+Context Precision: Out of all the documents the agent retrieved for Question #5, how many were actually relevant?
+Context Recall: Did the agent miss a critical document that should have been retrieved? (You will need a "golden dataset" of the exact documents required for 50 sample RFP questions to test this).
+2. Trajectory / Agentic Evals (Did it act rationally?)
+Tool Routing Accuracy: Did the agent correctly identify that a pricing question should use the SQL Tool instead of the Product Docs Vector DB?
+Step Efficiency: Did the agent solve the question in 2 steps, or did it get stuck in a loop and take 8 steps? (Penalize unnecessary tool calls to save latency and API costs).
+3. Final Output Evals (Is the answer good?)
+Faithfulness (Hallucination Check): Use an "LLM-as-a-Judge" to verify that the final drafted answer is strictly supported by the retrieved context. If the context says "We support SSO," and the agent writes "We support SSO and MFA," it fails.
+Tone & Formatting Compliance: Does the output match the strict, professional tone required for an enterprise RFP? Is it formatted in the exact JSON or Markdown structure requested?
+
 ---
 
 ### 4. Human-in-the-Loop (HITL) Mechanics
