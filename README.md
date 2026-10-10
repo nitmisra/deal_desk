@@ -56,6 +56,32 @@ Instead of naive chunking, we retrieve entire documents (or large structural sec
 
 **Why this path was selected:** It provides the context integrity of chunkless retrieval (crucial for complex pricing tables and compliance matrices) while using LLM-based compression to keep token costs and latency within production limits.
 
+
+
+The Trade-Off Matrix: Chunked vs. Chunkless
+Metric
+Traditional Chunked RAG
+Chunkless (Document-Level) RAG
+Context Integrity
+Low/Medium: Tables break, sentences split, parent-child mapping required.
+High: The LLM sees the full table, the full header hierarchy, and the complete thought.
+Retrieval Precision
+High: Embeddings are dense and specific. Searching for "SSO timeout" finds the exact paragraph.
+Low/Medium: Embedding a 50-page doc creates a "blurry average" of the whole text. Semantic search becomes less precise.
+LLM Accuracy
+Medium: Risk of the LLM missing context that was chopped off.
+High (with caveats): LLM has all the info, but suffers from the "Lost in the Middle" phenomenon (LLMs sometimes ignore facts buried in huge prompts).
+Cost (Tokens)
+Low: You only pay to process the 2-3 relevant chunks.
+High: You pay to process 10k–50k tokens per question. For a 60-question RFP, this gets expensive fast.
+Latency
+Fast: Small context windows generate answers in 1–2 seconds.
+Slow: Processing 50k tokens per query can take 5–15 seconds per question.
+Engineering Effort
+High: Requires complex chunking logic, parent-child mapping, and metadata tagging.
+Low: Ingestion is trivial. Just upload the doc and tag it.
+
+
 ---
 
 ### 2. The Agentic State Machine
