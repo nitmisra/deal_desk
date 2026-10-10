@@ -57,29 +57,51 @@ Instead of naive chunking, we retrieve entire documents (or large structural sec
 **Why this path was selected:** It provides the context integrity of chunkless retrieval (crucial for complex pricing tables and compliance matrices) while using LLM-based compression to keep token costs and latency within production limits.
 
 
+### The Trade-Off Matrix: Chunked vs. Chunkless
 
-The Trade-Off Matrix: Chunked vs. Chunkless
-Metric
-Traditional Chunked RAG
-Chunkless (Document-Level) RAG
-Context Integrity
-Low/Medium: Tables break, sentences split, parent-child mapping required.
-High: The LLM sees the full table, the full header hierarchy, and the complete thought.
-Retrieval Precision
-High: Embeddings are dense and specific. Searching for "SSO timeout" finds the exact paragraph.
-Low/Medium: Embedding a 50-page doc creates a "blurry average" of the whole text. Semantic search becomes less precise.
-LLM Accuracy
-Medium: Risk of the LLM missing context that was chopped off.
-High (with caveats): LLM has all the info, but suffers from the "Lost in the Middle" phenomenon (LLMs sometimes ignore facts buried in huge prompts).
-Cost (Tokens)
-Low: You only pay to process the 2-3 relevant chunks.
-High: You pay to process 10k–50k tokens per question. For a 60-question RFP, this gets expensive fast.
-Latency
-Fast: Small context windows generate answers in 1–2 seconds.
-Slow: Processing 50k tokens per query can take 5–15 seconds per question.
-Engineering Effort
-High: Requires complex chunking logic, parent-child mapping, and metadata tagging.
-Low: Ingestion is trivial. Just upload the doc and tag it.
+| Metric | Traditional Chunked RAG | Chunkless (Document-Level) RAG |
+| :--- | :--- | :--- |
+| **Context Integrity** | **Low/Medium:** Tables break, sentences split, parent-child mapping required. | **High:** The LLM sees the full table, the full header hierarchy, and the complete thought. |
+| **Retrieval Precision** | **High:** Embeddings are dense and specific. Searching for "SSO timeout" finds the exact paragraph. | **Low/Medium:** Embedding a 50-page doc creates a "blurry average" of the whole text. Semantic search becomes less precise. |
+| **LLM Accuracy** | **Medium:** Risk of the LLM missing context that was chopped off. | **High (with caveats):** LLM has all the info, but suffers from the "Lost in the Middle" phenomenon (LLMs sometimes ignore facts buried in huge prompts). |
+| **Cost (Tokens)** | **Low:** You only pay to process the 2-3 relevant chunks. | **High:** You pay to process 10k–50k tokens *per question*. For a 60-question RFP, this gets expensive fast. |
+| **Latency** | **Fast:** Small context windows generate answers in 1–2 seconds. | **Slow:** Processing 50k tokens per query can take 5–15 seconds per question. |
+| **Engineering Effort** | **High:** Requires complex chunking logic, parent-child mapping, and metadata tagging. | **Low:** Ingestion is trivial. Just upload the doc and tag it. |
+
+---
+
+### When Should You Use Chunkless Retrieval?
+
+Chunkless is not a silver bullet, but it is the perfect tool for specific scenarios in your DealDesk agent:
+
+*   **Holistic Queries:** If the RFP asks, *"Summarize your overall approach to data encryption,"* chunkless is superior. A chunked approach might miss the big picture, while a chunkless approach lets the LLM read the whole security chapter and synthesize it.
+*   **Short, Dense Documents:** If your knowledge base consists of 1–3 page FAQ sheets or specific policy briefs, chunking is overkill. Just retrieve the whole doc.
+*   **Complex Tables:** If the answer relies on cross-referencing rows and columns in a pricing matrix, chunkless (or at least "page-level" retrieval) prevents the table from being mangled by a chunker.
+
+---
+
+### The Winning Architecture: The "Hybrid" Approach
+
+For a production-grade Agentic PM, the best answer is rarely binary. The most robust systems use a **Hybrid Retrieval Strategy** that gets the best of both worlds. 
+
+Here is how you design the Retriever Node to be hybrid:
+
+**Step 1: Document-Level Filtering (The Broad Net)**  
+Use metadata and lightweight keyword/BM25 search to identify the top 2–3 documents that are relevant. (e.g., *"Find me the 'Security_Policy_2026.pdf' and 'SSO_Config_Guide.pdf'"*). No vector embeddings needed yet.
+
+**Step 2: LLM-Based Contextual Compression (The Smart Filter)**  
+Instead of passing the entire 50-page document to the final Generator LLM, you use a fast, cheap LLM (like GPT-4o-mini) as a "Filter Node".
+> **Prompt:** *"Here is a 20-page document. Extract ONLY the paragraphs, sentences, or table rows that are relevant to this specific question: '[RFP Question]'. Return only the exact quotes."*  
+> **Result:** The 20-page document is compressed down to 3 highly relevant paragraphs.
+
+**Step 3: Final Generation**  
+Pass those 3 compressed paragraphs to your high-quality LLM (e.g., Claude 3.5 Sonnet) to draft the final, polished RFP response.
+
+#### Why this wins:
+*   You avoid the engineering nightmare of perfect chunking.
+*   You avoid the "Lost in the Middle" problem and massive token costs of pure chunkless retrieval.
+*   You guarantee the LLM has the full, unbroken context (like intact tables) it needs to be accurate.
+
 
 
 ---
